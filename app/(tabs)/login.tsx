@@ -95,7 +95,10 @@ export default function LoginScreen() {
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
-          <Button title="Login" onPress={handleLogin} />
+          <>
+            <Button title="Login" onPress={handleLogin} />
+            <Button title="Login With GitHub" onPress={() => { window.location.href = 'http://localhost:8080/oauth2/authorization/github'; }} />
+          </>
         )}
       </View>
     </ImageBackground>
