@@ -8,6 +8,7 @@ import {
   Alert,
   ImageBackground,
   ActivityIndicator,
+  Linking,
 } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "../navigation/types";
@@ -97,7 +98,9 @@ export default function LoginScreen() {
         ) : (
           <>
             <Button title="Login" onPress={handleLogin} />
-            <Button title="Login With GitHub" onPress={() => { window.location.href = 'http://localhost:8080/oauth2/authorization/github'; }} />
+            <Button title="Login With GitHub" onPress={() => { 
+              Linking.openURL('https://bettingprojheroku-0f16500feb98.herokuapp.com/oauth2/authorization/github'); 
+            }} />
           </>
         )}
       </View>
