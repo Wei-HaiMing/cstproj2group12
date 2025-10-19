@@ -23,6 +23,53 @@ export default function LoginScreen() {
   const [dbInitialized, setDbInitialized] = useState(false);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
+  // Listen for deep link redirects from OAuth
+  // useEffect(() => {
+  //   const handleDeepLink = async (event: { url: string }) => {
+  //     const url = event.url;
+  //     console.log('Deep link received:', url);
+      
+  //     // Check if URL contains token
+  //     if (url.includes('token=')) {
+  //       const tokenMatch = url.match(/token=([^&]+)/);
+  //       const token = tokenMatch ? tokenMatch[1] : null;
+  //       try{
+  //         console.log('Token received:', token);
+  //         navigation.navigate("(tabs)", { screen: "logout" });
+
+  //       } catch (error) {
+  //         console.error('Error handling deep link:', error);
+  //       }
+  //       // if (token) {
+  //       //   console.log('Token received:', token);
+          
+  //       //   // Save token to AsyncStorage
+  //       //   // await AsyncStorage.setItem('jwtToken', token);
+          
+  //       //   Alert.alert('Success', 'Login successful!');
+          
+  //       //   // Navigate to logout screen
+  //       //   navigation.navigate("(tabs)", { screen: "logout" });
+  //       // }
+  //     }
+  //   };
+
+  //   // Add event listener for deep links
+  //   const subscription = Linking.addEventListener('url', handleDeepLink);
+
+  //   // Check if app was opened via deep link
+  //   Linking.getInitialURL().then((url) => {
+  //     if (url) {
+  //       handleDeepLink({ url });
+  //     }
+  //   });
+
+  //   // Cleanup
+  //   return () => {
+  //     subscription.remove();
+  //   };
+  // }, [navigation]);
+
   useEffect(() => {
     const initializeDb = async () => {
       try {
