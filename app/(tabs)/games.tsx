@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, FlatList, ActivityIndicator, Platform, Alert } from "react-native";
+import {
+  View,
+  Text,
+  Button,
+  FlatList,
+  ActivityIndicator,
+  Platform,
+  Alert,
+} from "react-native";
 
 type Game = {
   id?: number;
@@ -20,14 +28,19 @@ const BASE =
 export default function GamesScreen() {
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(false);
+  const [filter, setFilter] = useState<string | null>(null); // "scheduled", "completed", or null
 
-  const fetchGames = async () => {
+  const fetchGames = async (status?: string) => {
     try {
       setLoading(true);
-      const res = await fetch(`${BASE}/games`);
+      const url = status
+        ? `${BASE}/games?status=${encodeURIComponent(status)}`
+        : `${BASE}/games`;
+      const res = await fetch(url);
       if (!res.ok) throw new Error(`GET failed: ${res.status}`);
       const data = await res.json();
       setGames(data);
+      setFilter(status ?? null);
     } catch (err: any) {
       Alert.alert("Error", err.message);
     } finally {
@@ -37,6 +50,7 @@ export default function GamesScreen() {
 
   const createGame = async () => {
     try {
+      setLoading(true);
       const res = await fetch(`${BASE}/games`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -51,9 +65,11 @@ export default function GamesScreen() {
         }),
       });
       if (!res.ok) throw new Error(`POST failed: ${res.status}`);
-      fetchGames();
+      await fetchGames(filter || undefined);
     } catch (err: any) {
       Alert.alert("Error", err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -63,14 +79,28 @@ export default function GamesScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#1e1e1e", padding: 16 }}>
-      <Text style={{ color: "#fff", fontSize: 24, fontWeight: "bold", marginBottom: 16 }}>
+      <Text
+        style={{
+          color: "#fff",
+          fontSize: 24,
+          fontWeight: "bold",
+          marginBottom: 16,
+        }}
+      >
         NFL Games
       </Text>
 
-      <Button title="Refresh" onPress={fetchGames} color="#ffd33d" />
-      <Button title="Add Test Game" onPress={createGame} />
+      {/* Action Buttons */}
+      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+        <Button title="Show All" onPress={() => fetchGames()} />
+        <Button title="Scheduled" onPress={() => fetchGames("scheduled")} />
+        <Button title="Completed" onPress={() => fetchGames("completed")} />
+        <Button title="Add Test Game" onPress={createGame} color="#ffd33d" />
+      </View>
 
-      {loading && <ActivityIndicator size="large" color="#ffd33d" style={{ marginTop: 20 }} />}
+      {loading && (
+        <ActivityIndicator size="large" color="#ffd33d" style={{ marginTop: 20 }} />
+      )}
 
       <FlatList
         data={games}
@@ -93,6 +123,13 @@ export default function GamesScreen() {
             </Text>
           </View>
         )}
+        ListEmptyComponent={
+          !loading ? (
+            <Text style={{ color: "gray", marginTop: 20, textAlign: "center" }}>
+              No games found.
+            </Text>
+          ) : null
+        }
       />
     </View>
   );
