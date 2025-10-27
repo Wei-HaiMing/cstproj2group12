@@ -1,5 +1,4 @@
 import * as SQLite from 'expo-sqlite';
-
 let db; // Declare db variable
 
 // Reference Documentation = https://docs.expo.dev/versions/latest/sdk/sqlite/
@@ -126,15 +125,18 @@ export async function insertUser(username, password) {
 export async function verifyUserLogin(username, password) {
     await initializeDatabase();  // Ensure database is initialized
     try {
-        const user = await db.getFirstAsync(
-            'SELECT password FROM user WHERE username = $username', 
-            { $username: username }
-        );
+        const user = await fetch('https://bettingprojheroku-0f16500feb98.herokuapp.com/api/users/email/' + username,{
+            headers: { 'Accept': 'application/json' }
+        });
+            // await db.getFirstAsync(
+            // 'SELECT password FROM user WHERE username = $username', 
+            // { $username: username }
+        // );
+        const json = await user.json();
+        console.log('User from verifyUserLogin:', json);
 
-        console.log('User from verifyUserLogin:', user);
-
-        if (user) {
-            if (user.password === password) {
+        if (json) {
+            if (json.password === password) {
                 console.log('Login successful');
                 return true;
             } else {
@@ -181,11 +183,13 @@ export async function removeUser(username) {
 // Get user ID based on username
 export async function getUserID(username) {
     await initializeDatabase();  // Ensure database is initialized
-    const user = await db.getFirstAsync(
-        `SELECT id FROM user WHERE username = ?;`,
-        username
-    );
-    return user ? user.id : null;
+    const user = await fetch('https://bettingprojheroku-0f16500feb98.herokuapp.com/api/users/email/' + username,{
+            headers: { 'Accept': 'application/json' }
+        });
+    const json = await user.json();
+    console.log('User ID from getUserID:', json);
+
+    return json ? json.userId : null;
 }
 
 // Call initializeDatabase() when app is loaded
