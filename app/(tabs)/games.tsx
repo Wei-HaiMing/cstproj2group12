@@ -22,8 +22,8 @@ type Game = {
 
 const BASE =
   Platform.OS === "android"
-    ? "http://10.0.2.2:8080/api"
-    : "http://localhost:8080/api";
+    ? "https://bettingprojheroku-0f16500feb98.herokuapp.com/api"
+    : "https://bettingprojheroku-0f16500feb98.herokuapp.com/api";
 
 export default function GamesScreen() {
   const [games, setGames] = useState<Game[]>([]);
